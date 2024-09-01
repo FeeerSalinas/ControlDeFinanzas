@@ -1,0 +1,73 @@
+﻿@model ControlDeFinanzas.Models.Ingreso
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<!-- Estilos en línea para el modo oscuro -->
+<style>
+    body {
+        background-image: linear-gradient(to right, #434343 0%, black 100%);
+        color: white;
+    }
+
+    h1 {
+        padding-top: 8rem;
+        align-items: center;
+        text-align: center;
+    }
+
+</style>
+
+<h1>Editar </h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-group">
+                    <label asp-for="Categoria" class="form-label">Categoría</label>
+                    <select asp-for="Categoria" class="form-select">
+                        <option value="">-- Seleccione una categoría --</option>
+                        <option value="Salario">Salario</option>
+                        <option value="Venta">Venta</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <span asp-validation-for="Categoria" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="form-label">Descripción</label>
+                    <textarea placeholder="Describa el ingreso que desea registrar" style="height: 100px;" asp-for="Descripcion" class="form-control"></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Monto" class="form-label">Monto</label>
+                    <input type="number" min="0.01" placeholder="Ingrese el monto" asp-for="Monto" class="form-control" />
+                    <span asp-validation-for="Monto" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Fecha" class="form-label">Fecha</label>
+                    <input type="date" asp-for="Fecha" class="form-control" />
+                    <span asp-validation-for="Fecha" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <input type="submit" value="Modificar" class="btn btn-outline-primary w-100" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a class="btn btn-outline-secondary" asp-action="Index">Volver a ingresos</a>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

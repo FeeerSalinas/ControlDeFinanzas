@@ -1,0 +1,190 @@
+﻿@using ControlDeFinanzas.Data;
+@model Paginacion<Ingreso>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body {
+        background-image: linear-gradient(to right, #434343 0%, black 100%);
+        color: white;
+        overflow-x: hidden;
+    }
+
+    .table {
+        background-color: #333;
+        color: white;
+    }
+
+    .chart-container {
+        display: flex;
+        justify-content: center;
+    }
+
+        .chart-container canvas {
+            max-width: 350px;
+            max-height: 350px;
+        }
+
+    .form-select-sm {
+        width: auto;
+    }
+</style>
+
+<h1 class=" pt-5 pb-3 text-center">MIS INGRESOS</h1>
+
+
+<div class="container mt-4">
+    <p>
+        <a class="btn btn-outline-primary " asp-action="Create">Agregar un nuevo ingreso</a>
+    </p>
+
+    <form asp-controller="Ingreso" asp-action="Index" class="form-inline">
+        <div class="form-group">
+            <label for="searchString">Filtrar por categoria:</label>
+            <select name="searchString" class="form-select form-select-sm ml-2" onchange="this.form.submit();">
+                <option value="">-- Seleccione una categoría --</option>
+                <option value="Salario">Salario</option>
+                <option value="Venta">Venta</option>
+                <option value="Otro">Otro</option>
+                <option value="">Todos</option>
+            </select>
+        </div>
+    </form>
+
+    @{
+        var anteriordeshabilitado = !Model.PaginasAnteriores ? "disabled" : "";
+        var siguienteDeshabilitado = !Model.PaginasSiguientes ? "disabled" : "";
+    }
+
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- Tabla -->
+            <table class="table table-bordered mt-4">
+                <thead class="thead-dark">
+                    <tr class="text-center">
+                        <th class="text-center">
+                            Monto
+                        </th>
+                        <th class="text-center">
+                            Categoria
+                        </th>
+                        <th class="text-center">
+                           Descripcion
+                        </th>
+
+                        <th class="text-center">
+                           Fecha
+                        </th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center">
+                                @($"${item.Monto}")
+                            </td>
+                            <td class="text-center">
+                                @Html.DisplayFor(modelItem => item.Categoria)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Descripcion)
+                            </td>
+                            <td class="text-center">
+                                @Html.DisplayFor(modelItem => item.Fecha)
+                            </td>
+                            <td class="text-center">
+                                <a class="btn btn-outline-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div>
+                <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numpag="@(Model.PaginaInicio-1)" asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-outline-primary @anteriordeshabilitado ">Anterior</a>
+                @for (var i = 1; i <= Model.PaginasTotales; i++)
+                {
+                    var paginaActiva = (i == Model.PaginaInicio) ? "active" : "";
+                    <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numpag="@i" asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-outline-primary @paginaActiva ">@i</a>
+                }
+                <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numpag="@(Model.PaginaInicio+1)" asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-outline-primary @siguienteDeshabilitado ">Siguiente</a>
+            </div>
+            <a class="btn btn-outline-secondary mt-2" asp-controller="Home" asp-action="Index">Volver a inicio</a>
+        </div>
+
+
+        <!--grafico-->
+
+        <div class="col-lg-6 pt-0 chart-container">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <canvas id="myPiehart"></canvas>
+                </div>
+                <h2 class="text-center">
+                    Total de ingresos: $@ViewData["Total"]
+                </h2>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var ctx = document.getElementById('myPiehart').getContext('2d');
+        var myPiehart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Salario', 'Venta', 'Otro'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [
+        @Html.Raw(ViewData["SumaSalario"]),
+        @Html.Raw(ViewData["SumaVenta"]),
+        @Html.Raw(ViewData["SumaOtro"])
+                            ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': $' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
+

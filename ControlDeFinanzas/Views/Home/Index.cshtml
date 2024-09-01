@@ -1,0 +1,115 @@
+﻿@using ControlDeFinanzas.Models;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body {
+        background-image: linear-gradient(to right, #434343 0%, black 100%);
+        color: white;
+        overflow-x: hidden;
+    }
+
+
+    .chart-container {
+        display: flex;
+        justify-content: center;
+    }
+
+        .chart-container canvas {
+            max-width: 400px;
+            max-height: 400px;
+        }
+
+</style>
+
+<h1 class="pt-5 pb-3 text-center">HOLA FERNANDO</h1>
+
+<div class="container text-center mt-5">
+    <div class="row">
+        <div class="col">
+            <div class="container border border-success mb-5 rounded">
+                <h3 class="mt-3 mb-4">INGRESOS</h3>
+                <h4 class="text-start mb-5">Último ingreso: $@ViewData["UltimoIngresoMonto"]</h4>
+                <h4 class="text-start mb-5">Categoría: @ViewData["UltimoIngresoCategoria"]</h4>
+                <a class="text-start btn btn-outline-success mb-3" asp-controller="Ingreso" asp-action="Index">Ir a ingresos</a>
+            </div>
+        </div>
+        <div class="col">
+            <div class="container border border-danger rounded">
+                <h3 class="mt-3 mb-4">GASTOS</h3>
+                <h4 class="text-start mb-5">Último gasto: $@ViewData["UltimoGastoMonto"]</h4>
+                <h4 class="text-start mb-5">Categoría:  @ViewData["UltimoGastoCategoria"]</h4>
+                <a class="text-start btn btn-outline-danger mb-3" asp-controller="Gasto" asp-action="Index">Ir a gastos</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col">
+            <div class="container border border-ligth rounded">
+                <h3 class="mt-3 mb-4">DISPONIBLE</h3>
+                <h4 class="mb-4">Dinero disponible: $@ViewData["TotalDisponible"]</h4>
+                <h4 class="mb-4">Última actualización: @ViewData["UltimaActualizacion"]</h4>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="container chart-container">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <canvas id="myPiehart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+     <script>
+        var ctxPie = document.getElementById('myPiehart').getContext('2d');
+        var myPieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Ingresos', 'Gastos'],
+                datasets: [{
+                    label: 'Comparación',
+                    data: [
+        @Html.Raw(ViewData["TotalIngresos"]),
+        @Html.Raw(ViewData["TotalGastos"])
+                    ],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)', // Ingresos (verde)
+                        'rgba(255, 99, 132, 0.2)'  // Gastos (rojo)
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)', // Ingresos (verde)
+                        'rgba(255, 99, 132, 1)'  // Gastos (rojo)
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': $' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+     </script>
+}
