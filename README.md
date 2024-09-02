@@ -8,7 +8,7 @@ libreria de Chart.js para que puedas observar la relación entre tus tipos de in
 ¿Cómo puedo usarlo🤔?:
 Debes descargar el zip archivo comprimido o copiar el link para poder clonar este repositorio, es necesario que cuentes con vistual studio o visual studio code + el SDK de .Net.
 Una vez teniendo el proyecto descargado o clonado, debes ir a la sección de appsettings.json y en la seccion de server debes poner tu conexión de SQL Server Management, finalmente dirigete a la carpeta de
-Views y a la carpeta de Home, dentro del Index.cshtml localiza la etiqueta <h1> y coloca tu nombre en ella para que puedas recibir la bienvenida al momento de iniciar la app.
+Views y a la carpeta de Home, dentro del Index.cshtml localiza la etiqueta h1 y coloca tu nombre en ella para que puedas recibir la bienvenida al momento de iniciar la app.
 
 Demostración de la app:
 
